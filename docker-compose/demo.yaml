@@ -1,0 +1,80 @@
+version: '2'
+
+services:
+    ##############################################################################
+    # Below is the yaml for target1 backend - jaeger-target1
+    ##############################################################################
+    jaeger-collector-target1:
+      image: jaegertracing/jaeger-collector:1.7
+      command: ["--cassandra.keyspace=jaeger_target1", "--cassandra.servers=cassandra", "--collector.zipkin.http-port=9411"]
+      ports:
+        - "14269"
+        - "14268"
+        - "14267"
+        - "9411"
+      restart: on-failure
+      depends_on:
+        - jaeger-cassandra-schema-target1
+
+    jaeger-query-target1:
+      image: jaegertracing/jaeger-query:1.7
+      command: ["--cassandra.keyspace=jaeger_target1", "--cassandra.servers=cassandra"]
+      ports:
+        - "16686"
+        - "16687"
+      restart: on-failure
+      depends_on:
+        - jaeger-cassandra-schema-target1
+
+    jaeger-cassandra-schema-target1:
+      image: jaegertracing/jaeger-cassandra-schema:1.7
+      environment:
+        - CQLSH_HOST=cassandra
+        - DATACENTER=dc1
+        - KEYSPACE=jaeger_target1
+      depends_on:
+        - cassandra
+
+    ##############################################################################
+    # Below is the yaml for target2 backend - jaeger-target2
+    ##############################################################################
+    jaeger-collector-target2:
+      image: jaegertracing/jaeger-collector:1.7
+      command: ["--cassandra.keyspace=jaeger_target2", "--cassandra.servers=cassandra", "--collector.zipkin.http-port=9411"]
+      ports:
+        - "14269"
+        - "14268"
+        - "14267"
+        - "9411"
+      restart: on-failure
+      depends_on:
+        - jaeger-cassandra-schema-target2
+
+    jaeger-query-target2:
+      image: jaegertracing/jaeger-query:1.7
+      command: ["--cassandra.keyspace=jaeger_target2", "--cassandra.servers=cassandra"]
+      ports:
+        - "16686"
+        - "16687"
+      restart: on-failure
+      depends_on:
+        - jaeger-cassandra-schema-target2
+
+    jaeger-cassandra-schema-target2:
+      image: jaegertracing/jaeger-cassandra-schema:1.7
+      environment:
+        - CQLSH_HOST=cassandra
+        - DATACENTER=dc1
+        - KEYSPACE=jaeger_target2
+      depends_on:
+        - cassandra
+
+    ##############################################################################
+    # Cassandra is shared between the 2 Jaeger targets (separate keyspaces)
+    ##############################################################################
+    cassandra:
+      image: cassandra:3.9
+      ports:
+        - "9042:9042"
+
+
