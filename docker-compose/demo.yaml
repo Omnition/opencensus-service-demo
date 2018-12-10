@@ -1,16 +1,35 @@
 version: '2'
 
 services:
+
+    ##############################################################################
+    # Opencensus Collector with tail-sampling prototype
+    ##############################################################################
+    opencensus-collector:
+      image: omnition/opencensus-collector
+      command: ["--config=./cfg/config.yaml", "--receive-oc-trace", "--receive-jaeger", "--receive-zipkin"]
+      volumes:
+        - ./opencensus-config:/cfg
+      ports:
+        - "55678"
+        - "14268"
+        - "14267"
+        - "9411"
+      restart: on-failure
+      depends_on:
+        - jaeger-collector-target1
+        - jaeger-collector-target2
+
     ##############################################################################
     # Load Generator
     ##############################################################################
     synthetic-load-generator:
       image: omnition/synthetic-load-generator:latest
       environment:
-        - JAEGER_COLLECTOR_URL=http://jaeger-collector-target1:14268
+        - JAEGER_COLLECTOR_URL=http://opencensus-collector:14268
         - TOPOLOGY_FILE=topologies/hipster-shop.json
       depends_on:
-        - jaeger-collector-target1
+        - opencensus-collector
 
     ##############################################################################
     # Below is the yaml for target1 backend - jaeger-target1

@@ -1,0 +1,26 @@
+queued-exporters:
+  jaeger-1:
+    num-workers: 5
+    queue-size: 1000
+    retry-on-failure: true
+    sender-type: jaeger-thrift-http
+    jaeger-thrift-http:
+      collector-endpoint: http://jaeger-collector-target1:14268/api/traces
+      timeout: 5s
+  jaeger-2:
+    num-workers: 5
+    queue-size: 1000
+    retry-on-failure: true
+    sender-type: jaeger-thrift-http
+    jaeger-thrift-http:
+      collector-endpoint: http://jaeger-collector-target2:14268/api/traces
+      timeout: 5s
+sampling:
+  mode: tail
+  decision_wait: 10s
+  num_traces: 20000
+  policies:
+    always-sample:
+      exporter: jaeger-1
+    attribute-filter: 
+      exporter: jaeger-2
