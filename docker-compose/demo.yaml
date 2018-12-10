@@ -2,6 +2,17 @@ version: '2'
 
 services:
     ##############################################################################
+    # Load Generator
+    ##############################################################################
+    synthetic-load-generator:
+      image: omnition/synthetic-load-generator:latest
+      environment:
+        - JAEGER_COLLECTOR_URL=http://jaeger-collector-target1:14268
+        - TOPOLOGY_FILE=topologies/hipster-shop.json
+      depends_on:
+        - jaeger-collector-target1
+
+    ##############################################################################
     # Below is the yaml for target1 backend - jaeger-target1
     ##############################################################################
     jaeger-collector-target1:
