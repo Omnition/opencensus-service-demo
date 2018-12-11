@@ -1,0 +1,93 @@
+{
+  "topology" : {
+    "services" : [
+      {
+        "serviceName" : "frontend",
+        "instances" : [ "frontend-6b654dbf57-zq8dt", "frontend-d847fdcf5-j6s2f" ],
+        "tags" : { "version" : "v125", "region" : "us-east-1" },
+        "routes" : [
+          {
+            "route" : "/product",
+            "downstreamCalls" : { "productcatalogservice" :  "/ListProducts", "recommendationservice" : "/ListRecommendations" },
+            "operationModel" : { "errorPercent" : 0, "errorCode" : 503, "maxLatencyMillis" : 100 }
+          },
+          {
+            "route" : "/cart",
+            "downstreamCalls" : { "cartservice" :  "/GetCart" },
+            "operationModel" : { "errorPercent" : 0, "errorCode" : 503, "maxLatencyMillis" : 100 }
+          },
+          {
+            "route" : "/cart/checkout",
+            "downstreamCalls" : { "checkoutservice" :  "/PlaceOrder" },
+            "operationModel" : { "errorPercent" : 0, "errorCode" : 503, "maxLatencyMillis" : 300 }
+          }
+        ]
+      },
+      {
+        "serviceName" : "productcatalogservice",
+        "instances" : [ "productcatalogservice-6b654dbf57-zq8dt", "productcatalogservice-d847fdcf5-j6s2f" ],
+        "tags" : { "version" : "v52", "region" : "us-east-1" },
+        "routes" : [
+          {
+            "route" : "/ListProducts",
+            "downstreamCalls" : { },
+            "operationModel" : { "errorPercent" : 20, "errorCode" : 503, "maxLatencyMillis" : 200 }
+          }
+        ]
+      },
+      {
+        "serviceName" : "recommendationservice",
+        "instances" : [ "recommendationservice-6b654dbf57-zq8dt", "recommendationservice-d847fdcf5-j6s2f" ],
+        "tags" : { "version" : "v234", "region" : "us-east-1" },
+        "routes" : [
+          {
+            "route" : "/ListRecommendations",
+            "downstreamCalls" : { "productcatalogservice" : "/ListProducts" },
+            "operationModel" : { "errorPercent" : 40, "errorCode" : 503, "maxLatencyMillis" : 150 }
+          }
+        ]
+      },
+      {
+        "serviceName" : "cartservice",
+        "instances" : [ "cartservice-6b654dbf57-zq8dt", "cartservice-d847fdcf5-j6s2f" ],
+        "tags" : { "version" : "v5", "region" : "us-east-1" },
+        "routes" : [
+          {
+            "route" : "/GetCart",
+            "downstreamCalls" : { },
+            "operationModel" : { "errorPercent" : 30, "errorCode" : 503, "maxLatencyMillis" : 200 }
+          }
+        ]
+      },
+      {
+        "serviceName" : "checkoutservice",
+        "instances" : [ "checkoutservice-6b654dbf57-zq8dt", "checkoutservice-d847fdcf5-j6s2f" ],
+        "tags" : { "version" : "v37", "region" : "us-east-1" },
+        "routes" : [
+          {
+            "route" : "/PlaceOrder",
+            "downstreamCalls" : { },
+            "operationModel" : { "errorPercent" : 40, "errorCode" : 503, "maxLatencyMillis" : 500 }
+          }
+        ]
+      }
+    ]
+  },
+  "rootRoutes" : [
+    {
+      "service" : "frontend",
+      "route" : "/product",
+      "tracesPerHour" : 360
+    },
+    {
+      "service" : "frontend",
+      "route" : "/cart",
+      "tracesPerHour" : 360
+    },
+    {
+      "service" : "frontend",
+      "route" : "/cart/checkout",
+      "tracesPerHour" : 720
+    }
+  ]
+}

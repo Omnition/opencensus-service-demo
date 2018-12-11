@@ -27,9 +27,11 @@ services:
       image: omnition/synthetic-load-generator:latest
       environment:
         - JAEGER_COLLECTOR_URL=http://opencensus-collector:14268
-        - TOPOLOGY_FILE=topologies/hipster-shop.json
+        - TOPOLOGY_FILE=/sample-topologies/hipster-shop.json
       depends_on:
         - opencensus-collector
+      volumes:
+        - ./sample-topologies:/sample-topologies
 
     ##############################################################################
     # Below is the yaml for target1 backend - jaeger-target1
