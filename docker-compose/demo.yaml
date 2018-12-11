@@ -6,8 +6,8 @@ services:
     # Opencensus Collector with tail-sampling prototype
     ##############################################################################
     opencensus-collector:
-      image: omnition/opencensus-collector
-      command: ["--config=./cfg/config.yaml", "--receive-oc-trace", "--receive-jaeger", "--receive-zipkin"]
+      image: omnition/opencensus-collector:1.0.15
+      command: ["--config=/cfg/config.yaml", "--receive-oc-trace", "--receive-jaeger", "--receive-zipkin"]
       volumes:
         - ./opencensus-config:/cfg
       ports:

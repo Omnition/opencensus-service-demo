@@ -20,7 +20,16 @@ sampling:
   decision_wait: 10s
   num_traces: 20000
   policies:
-    always-sample:
+    string-tag-filter:
       exporter: jaeger-1
-    attribute-filter: 
+      configuration:
+        tag: version
+        values:
+          - "v37"
+          - "v5"
+    numeric-tag-filter:
       exporter: jaeger-2
+      configuration:
+        tag: http.status_code
+        min_value: 400
+        max_value: 999 
