@@ -24,7 +24,7 @@ services:
     # Load Generator
     ##############################################################################
     synthetic-load-generator:
-      image: omnition/synthetic-load-generator:latest
+      image: omnition/synthetic-load-generator:1.0.6
       environment:
         - JAEGER_COLLECTOR_URL=http://opencensus-collector:14268
         - TOPOLOGY_FILE=/sample-topologies/hipster-shop.json
@@ -52,7 +52,7 @@ services:
       image: jaegertracing/jaeger-query:1.7
       command: ["--cassandra.keyspace=jaeger_target1", "--cassandra.servers=cassandra"]
       ports:
-        - "16686"
+        - "17000:16686"
         - "16687"
       restart: on-failure
       depends_on:
@@ -86,7 +86,7 @@ services:
       image: jaegertracing/jaeger-query:1.7
       command: ["--cassandra.keyspace=jaeger_target2", "--cassandra.servers=cassandra"]
       ports:
-        - "16686"
+        - "18000:16686"
         - "16687"
       restart: on-failure
       depends_on:
